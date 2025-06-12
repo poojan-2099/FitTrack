@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
-import Login from '../components/auth/Login';
+import Register from '../components/auth/Register';
 import AuthLayout from '../components/auth/AuthLayout';
 
-const HomePage = () => {
+const RegisterPage = () => {
     const { user } = useAuth();
     const router = useRouter();
 
@@ -16,9 +16,9 @@ const HomePage = () => {
 
     return (
         <AuthLayout>
-            <Login />
+            <Register />
         </AuthLayout>
     );
 };
 
-export default HomePage;
+export default RegisterPage; 

@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Login from '../components/auth/Login';
 import AuthLayout from '../components/auth/AuthLayout';
 
-const HomePage = () => {
+const LoginPage = () => {
     const { user } = useAuth();
     const router = useRouter();
 
@@ -21,4 +21,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default LoginPage; 
