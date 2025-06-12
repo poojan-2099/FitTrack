@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "/Users/poojan/Downloads/Experiments/fitness-dashboard/out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

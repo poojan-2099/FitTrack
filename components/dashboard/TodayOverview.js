@@ -3,6 +3,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { DB } from '../../data/db';
 import { getCyclicalPlanForDate, getRecipeKeyFromMealName, getTaskKeyFromString } from '../../utils/helpers';
+import { getDailyQuote } from '../../utils/api';
 import RecipeModal from '../common/RecipeModal';
 import TabContentWrapper from '../common/TabContentWrapper';
 import { useAuth } from '../../contexts/AuthContext';
@@ -14,6 +15,8 @@ const TodayOverview = ({ userData }) => {
     const [showRecipeModal, setShowRecipeModal] = useState(false);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [dailyQuote, setDailyQuote] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const dateKey = new Date().toISOString().split('T')[0];
     const dailyTasksStatus = userData?.taskLogs?.[dateKey] || {};
@@ -31,6 +34,35 @@ const TodayOverview = ({ userData }) => {
             return reminder.hour > currentHour || (reminder.hour === currentHour && reminder.minute > currentMinute);
         });
         setReminders(filteredReminders);
+
+        // Load daily quote
+        const loadQuote = async () => {
+            try {
+                setIsLoading(true);
+                const quote = await getDailyQuote();
+                if (quote && quote.quote) {
+                    setDailyQuote(quote);
+                } else {
+                    // If no quote is returned, use a fallback
+                    setDailyQuote({
+                        quote: "The only bad workout is the one that didn't happen.",
+                        author: "Unknown",
+                        tags: ["fitness", "motivation"]
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading quote:', error);
+                // Set a fallback quote on error
+                setDailyQuote({
+                    quote: "Your body can stand almost anything. It's your mind you have to convince.",
+                    author: "Andrew Murphy",
+                    tags: ["fitness", "mindset"]
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadQuote();
     }, []);
 
     const toggleTaskCompletion = async (taskName) => {
@@ -158,8 +190,30 @@ const TodayOverview = ({ userData }) => {
                 </div>
             </div>
             <div className="bg-teal-600 text-white p-6 rounded-lg mt-6 shadow-md">
-                <h3 className="font-semibold text-lg mb-2">💡 Motivational Quote</h3>
-                <p className="italic">{DB.affirmations[new Date().getDay() % DB.affirmations.length]}</p>
+                <h3 className="font-semibold text-lg mb-2">💡 Daily Motivation</h3>
+                {isLoading ? (
+                    <div className="animate-pulse">
+                        <div className="h-4 bg-teal-500 rounded w-3/4 mb-4"></div>
+                        <div className="h-4 bg-teal-500 rounded w-1/2"></div>
+                    </div>
+                ) : dailyQuote ? (
+                    <div className="space-y-4">
+                        <blockquote className="text-lg italic">
+                            "{dailyQuote.quote}"
+                        </blockquote>
+                        <p className="text-sm">- {dailyQuote.author}</p>
+                        <div className="flex flex-wrap gap-2">
+                            {dailyQuote.tags.map((tag, index) => (
+                                <span 
+                                    key={index}
+                                    className="px-2 py-1 bg-teal-500 text-white rounded-full text-xs"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                ) : null}
             </div>
             {showRecipeModal && selectedRecipe && (
                 <RecipeModal 

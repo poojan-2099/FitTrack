@@ -17,6 +17,7 @@ const Dashboard = ({ userData }) => {
     const { signOut } = useAuth();
     const [activeTab, setActiveTab] = useState('today');
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const handleSignOut = async () => {
         try {
@@ -25,6 +26,11 @@ const Dashboard = ({ userData }) => {
         } catch (error) {
             console.error('Error signing out:', error);
         }
+    };
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setShowMobileMenu(false);
     };
 
     const renderContent = () => {
@@ -48,6 +54,16 @@ const Dashboard = ({ userData }) => {
         }
     };
 
+    const navigationItems = [
+        { id: 'today', label: 'Today' },
+        { id: 'nutrition', label: 'Nutrition' },
+        { id: 'workouts', label: 'Workouts' },
+        { id: 'calculators', label: 'Calculators' },
+        { id: 'mindset', label: 'Mindset' },
+        { id: 'goals', label: 'Goals' },
+        { id: 'calendar', label: 'Calendar' }
+    ];
+
     return (
         <div className="min-h-screen bg-stone-50">
             <nav className="bg-white shadow-sm">
@@ -55,83 +71,59 @@ const Dashboard = ({ userData }) => {
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
-                                <h1 className="text-xl font-bold text-teal-600">FitTrack</h1>
+                                <button
+                                    onClick={() => handleTabChange('today')}
+                                    className="text-xl font-bold text-teal-600 hover:text-teal-700 transition-colors duration-200"
+                                >
+                                    FitTrack
+                                </button>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                                <button
-                                    onClick={() => setActiveTab('today')}
-                                    className={`${
-                                        activeTab === 'today'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Today
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('nutrition')}
-                                    className={`${
-                                        activeTab === 'nutrition'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Nutrition
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('workouts')}
-                                    className={`${
-                                        activeTab === 'workouts'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Workouts
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('calculators')}
-                                    className={`${
-                                        activeTab === 'calculators'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Calculators
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('mindset')}
-                                    className={`${
-                                        activeTab === 'mindset'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Mindset
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('goals')}
-                                    className={`${
-                                        activeTab === 'goals'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Goals
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('calendar')}
-                                    className={`${
-                                        activeTab === 'calendar'
-                                            ? 'border-teal-500 text-stone-900'
-                                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
-                                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                                >
-                                    Calendar
-                                </button>
+                                {navigationItems.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => handleTabChange(item.id)}
+                                        className={`${
+                                            activeTab === item.id
+                                                ? 'border-teal-500 text-stone-900'
+                                                : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700'
+                                        } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                         <div className="flex items-center">
-                            <div className="relative">
+                            <button
+                                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                                className="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-stone-400 hover:text-stone-500 hover:bg-stone-100 focus:outline-none"
+                            >
+                                <svg
+                                    className="h-6 w-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    {showMobileMenu ? (
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    ) : (
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 6h16M4 12h16M4 18h16"
+                                        />
+                                    )}
+                                </svg>
+                            </button>
+                            <div className="relative ml-3">
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
                                     className="flex items-center space-x-2 text-stone-700 hover:text-stone-900 focus:outline-none"
@@ -164,6 +156,61 @@ const Dashboard = ({ userData }) => {
                     </div>
                 </div>
             </nav>
+
+            {/* Mobile menu */}
+            <div
+                className={`${
+                    showMobileMenu ? 'translate-x-0' : '-translate-x-full'
+                } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out sm:hidden`}
+            >
+                <div className="pt-5 pb-4 px-4">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-stone-900">Menu</h2>
+                        <button
+                            onClick={() => setShowMobileMenu(false)}
+                            className="text-stone-400 hover:text-stone-500"
+                        >
+                            <svg
+                                className="h-6 w-6"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                    <nav className="space-y-1">
+                        {navigationItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => handleTabChange(item.id)}
+                                className={`${
+                                    activeTab === item.id
+                                        ? 'bg-teal-50 text-teal-600'
+                                        : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                                } w-full flex items-center px-3 py-2 text-base font-medium rounded-md`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </nav>
+                </div>
+            </div>
+
+            {/* Overlay */}
+            {showMobileMenu && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden"
+                    onClick={() => setShowMobileMenu(false)}
+                />
+            )}
             
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 {renderContent()}
